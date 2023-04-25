@@ -1,0 +1,18 @@
+@use "sass:math";
+@use "sass:color";
+
+@function strip-units($value) {
+  @return math.div($value, ($value * 0 + 1));
+}
+
+@function m-percentage($value-1, $value-2) {
+  @return math.percentage(math.div(strip-units($value-1), strip-units($value-2)));
+}
+
+@function m-darken($color, $percentage) {
+  @return color.adjust($color, $lightness: - $percentage);
+}
+
+@function m-lighten($color, $percentage) {
+  @return color.adjust($color, $lightness: $percentage);
+}
