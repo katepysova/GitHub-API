@@ -2,9 +2,9 @@ import PropTypes from "prop-types";
 import { Droppable } from "react-beautiful-dnd";
 import Issue from "@components/shared/Issue/Issue.jsx";
 
-function Column({ list }) {
+function Column({ col }) {
   return (
-    <Droppable droppableId="col-1">
+    <Droppable droppableId={col.id}>
       {(provided) => (
         <div
           style={{
@@ -14,9 +14,13 @@ function Column({ list }) {
           {...provided.droppableProps}
           ref={provided.innerRef}
         >
-          {list.map((item, index) => (
-            <Issue key={item} text={item} index={index} />
-          ))}
+          <div>
+            <h2>{col.id}</h2>
+            {col.list.map((item, index) => (
+              <Issue key={item} text={item} index={index} />
+            ))}
+          </div>
+
           {provided.placeholder}
         </div>
       )}
@@ -25,7 +29,7 @@ function Column({ list }) {
 }
 
 Column.propTypes = {
-  list: PropTypes.array.isRequired
+  col: PropTypes.object.isRequired
 };
 
 export default Column;
