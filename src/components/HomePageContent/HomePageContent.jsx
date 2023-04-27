@@ -1,23 +1,10 @@
 import React, { useState } from "react";
 import Column from "@components/shared/Column/Column.jsx";
+import Search from "@components/shared/Search/Search.jsx";
 import { DragDropContext } from "react-beautiful-dnd";
 
 function HomePageContent() {
-  const initialColumns = {
-    todo: {
-      id: "todo",
-      list: ["item 1", "item 2", "item 3"]
-    },
-    doing: {
-      id: "doing",
-      list: []
-    },
-    done: {
-      id: "done",
-      list: []
-    }
-  };
-  const [columns, setColumns] = useState(initialColumns);
+  const [columns, setColumns] = useState(null);
 
   const onDragEnd = ({ source, destination }) => {
     // Make sure we have a valid destination
@@ -83,15 +70,45 @@ function HomePageContent() {
     }
   };
 
+  const getIssues = async (event) => {
+    event.preventDefault();
+
+    /*
+    const response = await API.get(`https://api.github.com/repos/facebook/react/issues?&state=all`);
+    const issues = response.data;
+
+    const closedIssues = issues.filter((i) => i.state === "closed");
+    const openIssues = issues.filter((i) => i.state === "open" && !i.assignee);
+    const progressIssues = openIssues.filter((i) => i.assignee);
+
+    //console.log({ closedIssues }, { openIssues }, { progressIssues });
+
+    setColumns(() => ({
+      todo: { id: "todo", list: openIssues },
+      done: { id: "done", list: closedIssues },
+      progress: { id: "progress", list: progressIssues }
+    }));
+
+    setIssues(issues);
+    */
+  };
+
+  //console.log(issues);
+
   return (
     <main className="main">
       <section className="home-page">
         <div className="container">
-          <DragDropContext onDragEnd={onDragEnd}>
-            {Object.values(columns).map((col) => (
-              <Column col={col} key={col.id} />
-            ))}
-          </DragDropContext>
+          <Search handleSubmit={getIssues} />
+          <div className="grid">
+            {columns && (
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Column col={columns.todo} key={columns.todo.id} />
+                <Column col={columns.progress} key={columns.progress.id} />
+                <Column col={columns.done} key={columns.done.id} />
+              </DragDropContext>
+            )}
+          </div>
         </div>
       </section>
     </main>

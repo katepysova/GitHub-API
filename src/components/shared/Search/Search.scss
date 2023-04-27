@@ -1,0 +1,61 @@
+@import "src/styles/variables";
+@import "src/styles/functions";
+
+.search-form {
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  &__input {
+    flex: 1;
+    padding: 12px 24px;
+    border: 1.6px solid $color-white;
+    background-color: $color-white;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.2s;
+
+    &:focus,
+    &:active {
+      outline: 0;
+      box-shadow: 0 0 0 2px $color-blue;
+    }
+
+    &.search-form__input--error {
+      border-color: $color-red;
+    }
+  }
+
+  &__btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    transition: all 0.2s;
+
+    &:disabled {
+      cursor: not-allowed;
+      color: $color-white;
+      background-color: m-lighten($color-blue, 15%);
+    }
+
+    &:not(:disabled) {
+      color: $color-white;
+      background-color: $color-blue;
+
+      &:hover {
+        background-color: m-darken($color-blue, 15%);
+      }
+
+      &:active {
+        background-color: m-darken($color-blue, 25%);
+      }
+    }
+  }
+
+  &__error {
+    color: $color-red;
+  }
+}

@@ -23,15 +23,8 @@ html {
 
 body {
   color: $color-black;
-  background-color: $color-white;
+  background-color: $color-grey;
   font-family: "Open Sans", sans-serif;
-}
-
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 100%;
 }
 
 main {
@@ -69,5 +62,12 @@ ul {
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 80px 160px;
+  padding: 60px 120px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 44px;
+  grid-template-rows: 500px;
 }

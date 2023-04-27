@@ -1,0 +1,36 @@
+@import "src/styles/variables";
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__title {
+    font-size: 18px;
+    line-height: 24px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  &__list {
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+    height: 100%;
+    overflow-y: scroll;
+
+    &--todo {
+      background-color: $color-green;
+    }
+
+    &--progress {
+      background-color: $color-yellow;
+    }
+
+    &--done {
+      background-color: $color-pink;
+    }
+  }
+}

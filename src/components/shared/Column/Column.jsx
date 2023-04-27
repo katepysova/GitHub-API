@@ -1,27 +1,26 @@
 import PropTypes from "prop-types";
 import { Droppable } from "react-beautiful-dnd";
+import cn from "classnames";
 import Issue from "@components/shared/Issue/Issue.jsx";
+
+import "./Column.scss";
 
 function Column({ col }) {
   return (
     <Droppable droppableId={col.id}>
       {(provided) => (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column"
-          }}
-          {...provided.droppableProps}
-          ref={provided.innerRef}
-        >
-          <div>
-            <h2>{col.id}</h2>
+        <div className="column">
+          <h2 className="column__title">{col.id}</h2>
+          <div
+            className={cn("column__list", `column__list--${col.id}`)}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
             {col.list.map((item, index) => (
-              <Issue key={item} text={item} index={index} />
+              <Issue key={item.id} item={item} index={index} />
             ))}
+            {provided.placeholder}
           </div>
-
-          {provided.placeholder}
         </div>
       )}
     </Droppable>

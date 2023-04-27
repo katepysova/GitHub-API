@@ -19,7 +19,7 @@
     "redux-saga": "^1.2.2",
     "svg-sprite-loader": "^6.0.11",
     "web-vitals": "^2.1.4",
-    "yup": "^1.0.0"
+    "yup": "^1.1.1"
   },
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve --config webpack.dev.config.js",
