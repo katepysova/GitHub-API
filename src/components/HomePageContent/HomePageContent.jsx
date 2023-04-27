@@ -1,10 +1,31 @@
 import React, { useState } from "react";
 import Column from "@components/shared/Column/Column.jsx";
+import API from "@common/api.js";
 import Search from "@components/shared/Search/Search.jsx";
 import { DragDropContext } from "react-beautiful-dnd";
+import Loader from "@components/shared/Loader/Loader.jsx";
+import EmptyState from "@components/shared/EmptyState/EmptyState.jsx";
+import BreadCrumbs from "@components/shared/BreadCrumbs/BreadCrumbs.jsx";
+
+import "./HomePageContent.scss";
+
+const generateGetIssuesUrl = (owner, repo) =>
+  `https://api.github.com/repos/${owner}/${repo}/issues?&state=all`;
+
+const generateGetStarsUrl = (owner, repo) =>
+  `https://api.github.com/repos/${owner}/${repo}/stargazers`;
+
+const generateOwnerUrl = (owner) => `https://github.com/${owner}`;
+
+const generateRepoUrl = (owner, repo) => {
+  return `${generateOwnerUrl(owner)}/${repo}`;
+};
 
 function HomePageContent() {
   const [columns, setColumns] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [breadCrumbsData, setBreadCrumbsData] = useState(null);
 
   const onDragEnd = ({ source, destination }) => {
     // Make sure we have a valid destination
@@ -70,45 +91,87 @@ function HomePageContent() {
     }
   };
 
-  const getIssues = async (event) => {
-    event.preventDefault();
+  const getIssues = async (values, actions) => {
+    try {
+      setColumns(null);
+      setIsLoading(true);
+      setBreadCrumbsData(null);
 
-    /*
-    const response = await API.get(`https://api.github.com/repos/facebook/react/issues?&state=all`);
-    const issues = response.data;
+      const urlArr = values.search.split("/").slice(3);
+      const [owner, repo] = urlArr;
 
-    const closedIssues = issues.filter((i) => i.state === "closed");
-    const openIssues = issues.filter((i) => i.state === "open" && !i.assignee);
-    const progressIssues = openIssues.filter((i) => i.assignee);
+      const starsResponse = await API.get(generateGetStarsUrl(owner, repo));
+      const stars = starsResponse.data?.length || 0;
 
-    //console.log({ closedIssues }, { openIssues }, { progressIssues });
+      setBreadCrumbsData((state) => ({
+        ...state,
+        stars: stars,
+        owner: {
+          name: owner,
+          url: generateOwnerUrl(owner)
+        },
+        repo: {
+          name: repo,
+          url: generateRepoUrl(owner, repo)
+        }
+      }));
 
-    setColumns(() => ({
-      todo: { id: "todo", list: openIssues },
-      done: { id: "done", list: closedIssues },
-      progress: { id: "progress", list: progressIssues }
-    }));
+      const issuesResponse = await API.get(generateGetIssuesUrl(owner, repo));
+      const issues = issuesResponse.data;
 
-    setIssues(issues);
-    */
+      if (issues && issues.length > 0) {
+        const closedIssues = issues.filter((i) => i.state === "closed");
+        const openIssues = issues.filter((i) => i.state === "open" && !i.assignee);
+        const progressIssues = issues.filter((i) => i.state === "open" && i.assignee);
+
+        setColumns(() => ({
+          todo: { id: "todo", list: openIssues },
+          done: { id: "done", list: closedIssues },
+          progress: { id: "progress", list: progressIssues }
+        }));
+      }
+    } catch (error) {
+      if (error.response) {
+        setBreadCrumbsData(null);
+        actions.setErrors({ search: error.response.data.message });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  //console.log(issues);
 
   return (
     <main className="main">
       <section className="home-page">
-        <div className="container">
-          <Search handleSubmit={getIssues} />
-          <div className="grid">
-            {columns && (
+        <div className="home-page__container container">
+          <div className="home-page__header">
+            <h1 className="heading-primary">GitHub API</h1>
+            <p className="paragraph">
+              <span className="hint">Hint:</span> enter a repo URL in the search field below and
+              press the button. Search example:&nbsp;
+              <code className="code">https://github.com/facebook/react</code>.
+            </p>
+            <div className="home-page__actions">
+              <Search handleSubmit={getIssues} placeholder="Enter repo URL..." />
+              {breadCrumbsData && <BreadCrumbs items={breadCrumbsData} />}
+            </div>
+          </div>
+
+          {!columns && isLoading && (
+            <div className="home-page__loader">
+              <Loader />
+            </div>
+          )}
+          {!columns && !isLoading && <EmptyState />}
+          {columns && (
+            <div className="home-page__grid">
               <DragDropContext onDragEnd={onDragEnd}>
                 <Column col={columns.todo} key={columns.todo.id} />
                 <Column col={columns.progress} key={columns.progress.id} />
                 <Column col={columns.done} key={columns.done.id} />
               </DragDropContext>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
     </main>

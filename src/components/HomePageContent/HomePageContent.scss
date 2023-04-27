@@ -1,0 +1,42 @@
+.home-page {
+  min-height: 100%;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    height: 100%;
+    min-height: 100vh;
+    gap: 36px;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  &__loader {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50%;
+  }
+
+  &__grid {
+    padding: 18px 0;
+    overflow-y: scroll;
+    flex-basis: 50%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 44px;
+    flex-grow: 1;
+  }
+}

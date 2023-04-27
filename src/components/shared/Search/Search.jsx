@@ -4,7 +4,12 @@ import { Formik, Form } from "formik";
 import searchValidationSchema from "./validation.schema.js";
 import "./Search.scss";
 
-function Search({ placeHolder = "Search...", onSearch, buttonText = "Load issues" }) {
+function Search({
+  placeholder = "Search...",
+  handleSubmit,
+  buttonText = "Load issues",
+  className
+}) {
   return (
     <Formik
       initialValues={{
@@ -12,10 +17,10 @@ function Search({ placeHolder = "Search...", onSearch, buttonText = "Load issues
       }}
       validationSchema={searchValidationSchema}
       validateOnChange={true}
-      onSubmit={onSearch}
+      onSubmit={handleSubmit}
     >
       {({ values, errors, isSubmitting, isValid, handleChange }) => (
-        <Form className="search-form">
+        <Form className={cn("search-form", className)}>
           <div className="search-form__content">
             <input
               className={cn("search-form__input", {
@@ -25,13 +30,13 @@ function Search({ placeHolder = "Search...", onSearch, buttonText = "Load issues
               name="search"
               value={values.search}
               onChange={handleChange}
-              placeholder={placeHolder}
+              placeholder={placeholder}
             />
-            <button className="search-form__btn" disabled={isSubmitting || !isValid}>
+            {errors.search && <small className="search-form__error">{errors.search}</small>}
+            <button className="search-form__btn" type="submit" disabled={isSubmitting || !isValid}>
               {buttonText}
             </button>
           </div>
-          {errors.search && <small className="search-form__error">{errors.search}</small>}
         </Form>
       )}
     </Formik>
@@ -39,9 +44,10 @@ function Search({ placeHolder = "Search...", onSearch, buttonText = "Load issues
 }
 
 Search.propTypes = {
-  placeHolder: PropTypes.string,
-  onSearch: PropTypes.func,
-  buttonText: PropTypes.string
+  placeholder: PropTypes.string,
+  handleSubmit: PropTypes.func.isRequired,
+  buttonText: PropTypes.string,
+  className: PropTypes.string
 };
 
 export default Search;

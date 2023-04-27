@@ -10,7 +10,7 @@ function Column({ col }) {
     <Droppable droppableId={col.id}>
       {(provided) => (
         <div className="column">
-          <h2 className="column__title">{col.id}</h2>
+          <h2 className="heading-secondary u-center">{col.id}</h2>
           <div
             className={cn("column__list", `column__list--${col.id}`)}
             {...provided.droppableProps}

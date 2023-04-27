@@ -6,6 +6,7 @@
     display: flex;
     align-items: center;
     gap: 18px;
+    position: relative;
   }
 
   &__input {
@@ -56,6 +57,9 @@
   }
 
   &__error {
+    position: absolute;
+    left: 0;
+    bottom: -20px;
     color: $color-red;
   }
 }

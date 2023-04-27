@@ -1,0 +1,52 @@
+@import "src/styles/variables";
+@import "src/styles/functions";
+
+.bread-crumbs {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  font-size: 18px;
+  gap: 24px;
+  line-height: 18px;
+
+  &__list,
+  &__rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__arrow {
+    color: m-darken($color-blue, 25%);
+  }
+
+  &__link {
+    &:link,
+    &:visited {
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+
+      &::before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        background-color: m-darken($color-blue, 25%);
+        left: 0;
+        bottom: -6px;
+        transition: all 0.2s;
+      }
+    }
+
+    &:hover,
+    &:active {
+      color: m-darken($color-blue, 25%);
+
+      &::before {
+        width: 100%;
+      }
+    }
+  }
+}

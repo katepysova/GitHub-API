@@ -1,0 +1,17 @@
+@import "src/styles/variables";
+
+.empty-state {
+  background-color: $color-white;
+  border-radius: 8px;
+  padding: 64px;
+
+  &__message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 18px;
+    line-height: 24px;
+    color: $color-text-grey;
+  }
+}

@@ -25,8 +25,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "public/index.html",
-      favicon: "public/favicon.ico",
-      title: "Student Career Predictor"
+      favicon: "public/favicon.ico"
     }),
     new miniCssExtractPlugin(),
     new Dotenv(),
