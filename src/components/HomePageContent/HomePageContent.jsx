@@ -9,11 +9,11 @@ import BreadCrumbs from "@components/shared/BreadCrumbs/BreadCrumbs.jsx";
 import LocalStorage from "@common/localStorage.js";
 import { ISSUES_LS_KEY } from "@constants/constants.js";
 
-import urlHelpers from "./urlHelpers.js"; // minutes
+import urlHelpers from "./urlHelpers.js";
 
 import "./HomePageContent.scss";
 
-const ISSUES_EXP_TIME = 15;
+const ISSUES_EXP_TIME = 15; // in minutes
 
 const setExpirationTime = (minutes = ISSUES_EXP_TIME) => {
   const currentTime = new Date();

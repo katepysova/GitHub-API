@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-const reg = new RegExp("^https://github.com(/[\\w.-]+){2}/?$");
+const reg = new RegExp("^https://github.com(/[\\w.-]+){2}$");
 
 const searchValidationSchema = Yup.object({
   search: Yup.string()
