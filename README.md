@@ -10,7 +10,7 @@ The main idea of this project is to get GitHub issues distributed into 3 categot
 
 User is able to drag-n-drop between the columns and change the order of issues.
 
-The final position will be saved in the localStorage with the experation time of **15 minutes** (the value can be changed by updating `const ISSUES_EXP_TIME = new value`).
+The final position will be saved in the localStorage with the expiration time of **15 minutes** (the value can be changed by updating `const ISSUES_EXP_TIME = new value`).
 
 See [Project Demo](https://katepysova.github.io/GitHub-API/) serviced on GitHub Pages.
 
