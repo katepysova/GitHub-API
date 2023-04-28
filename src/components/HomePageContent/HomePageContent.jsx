@@ -7,17 +7,23 @@ import Loader from "@components/shared/Loader/Loader.jsx";
 import EmptyState from "@components/shared/EmptyState/EmptyState.jsx";
 import BreadCrumbs from "@components/shared/BreadCrumbs/BreadCrumbs.jsx";
 import LocalStorage from "@common/localStorage.js";
+import { ISSUES_LS_KEY } from "@constants/constants.js";
 
-import urlHelpers from "./urlHelpers.js";
+import urlHelpers from "./urlHelpers.js"; // minutes
 
 import "./HomePageContent.scss";
+
+const ISSUES_EXP_TIME = 15;
+
+const setExpirationTime = (minutes = ISSUES_EXP_TIME) => {
+  const currentTime = new Date();
+  return currentTime.getTime() + minutes * 60 * 1000;
+};
 
 function HomePageContent() {
   const [columns, setColumns] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
   const [breadCrumbsData, setBreadCrumbsData] = useState(null);
-
   const [url, setUrl] = useState(null);
 
   const onDragEnd = ({ source, destination }) => {
@@ -66,8 +72,11 @@ function HomePageContent() {
 
   useEffect(() => {
     if (columns || breadCrumbsData) {
-      const issues = LocalStorage.getItem("issues") || {};
-      LocalStorage.setItem("issues", { ...issues, [url]: { columns, breadCrumbsData } });
+      const issues = LocalStorage.getItem(ISSUES_LS_KEY) || {};
+      LocalStorage.setItem(ISSUES_LS_KEY, {
+        ...issues,
+        [url]: { columns, breadCrumbsData, expTime: setExpirationTime() }
+      });
     }
   }, [columns, breadCrumbsData]);
 
@@ -82,7 +91,7 @@ function HomePageContent() {
       const urlArr = url.split("/").slice(3);
       const [owner, repo] = urlArr;
 
-      const issuesFromLS = LocalStorage.getItem("issues") || {};
+      const issuesFromLS = LocalStorage.getItem(ISSUES_LS_KEY) || {};
       const currentIssueFromLS = issuesFromLS[url] || null;
 
       if (currentIssueFromLS) {
