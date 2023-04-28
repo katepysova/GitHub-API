@@ -104,7 +104,7 @@ function HomePageContent() {
       const issues = issuesResponse.data;
 
       const starsResponse = await API.get(urlHelpers.generateGetStarsUrl(owner, repo));
-      const stars = starsResponse.data?.length || 0;
+      const stars = starsResponse.data?.stargazers_count || 0;
 
       setBreadCrumbsData((state) => ({
         ...state,
