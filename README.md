@@ -2,6 +2,16 @@
 
 This project uses [The GitHub API](https://docs.github.com/en) - the APIs that you can use to interact with GitHub.
 
+The main idea of this project is to get GitHub issues distributed into 3 categoties:
+
+- ToDo (all new issues).
+- In Progress (opened issues with assignee).
+- Done (closed issues).
+
+User is able to drag-n-drop between the columns and change the order of issues.
+
+The final position will be saved in the localStorage with the experation time of **15 minutes** (the value can be changed by updating `const ISSUES_EXP_TIME = new value`).
+
 See [Project Demo](https://katepysova.github.io/GitHub-API/) serviced on GitHub Pages.
 
 ## Installation
