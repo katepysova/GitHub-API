@@ -11,9 +11,10 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 16px;
+    padding: 18px;
     height: 100%;
     overflow-y: scroll;
+    border: 1px solid $color-text-grey;
 
     &--todo {
       background-color: $color-green;

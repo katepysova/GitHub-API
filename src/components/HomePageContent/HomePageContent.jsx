@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Column from "@components/shared/Column/Column.jsx";
 import API from "@common/api.js";
 import Search from "@components/shared/Search/Search.jsx";
@@ -6,20 +6,11 @@ import { DragDropContext } from "react-beautiful-dnd";
 import Loader from "@components/shared/Loader/Loader.jsx";
 import EmptyState from "@components/shared/EmptyState/EmptyState.jsx";
 import BreadCrumbs from "@components/shared/BreadCrumbs/BreadCrumbs.jsx";
+import LocalStorage from "@common/localStorage.js";
+
+import urlHelpers from "./urlHelpers.js";
 
 import "./HomePageContent.scss";
-
-const generateGetIssuesUrl = (owner, repo) =>
-  `https://api.github.com/repos/${owner}/${repo}/issues?&state=all`;
-
-const generateGetStarsUrl = (owner, repo) =>
-  `https://api.github.com/repos/${owner}/${repo}/stargazers`;
-
-const generateOwnerUrl = (owner) => `https://github.com/${owner}`;
-
-const generateRepoUrl = (owner, repo) => {
-  return `${generateOwnerUrl(owner)}/${repo}`;
-};
 
 function HomePageContent() {
   const [columns, setColumns] = useState(null);
@@ -27,69 +18,58 @@ function HomePageContent() {
 
   const [breadCrumbsData, setBreadCrumbsData] = useState(null);
 
-  const onDragEnd = ({ source, destination }) => {
-    // Make sure we have a valid destination
+  const [url, setUrl] = useState(null);
 
+  const onDragEnd = ({ source, destination }) => {
     if (!destination) return;
 
-    // Make sure we're actually moving the item
     if (source.droppableId === destination.droppableId && destination.index === source.index)
       return;
 
-    // Set start and end variables
     const start = columns[source.droppableId];
     const end = columns[destination.droppableId];
 
-    // If start is the same as end, we're in the same column
     if (start === end) {
-      // Move the item within the list
-      // Start by making a new list without the dragged item
       const newList = start.list.filter((_, idx) => idx !== source.index);
 
-      // Then insert the item at the right location
       newList.splice(destination.index, 0, start.list[source.index]);
 
-      // Then create a new copy of the column object
       const newCol = {
         id: start.id,
         list: newList
       };
 
-      // Update the state
       setColumns((state) => ({ ...state, [newCol.id]: newCol }));
-      return null;
     } else {
-      // If start is different from end, we need to update multiple columns
-      // Filter the start list like before
       const newStartList = start.list.filter((_, idx) => idx !== source.index);
-
-      // Create a new start column
       const newStartCol = {
         id: start.id,
         list: newStartList
       };
 
-      // Make a new end list array
       const newEndList = end.list;
 
-      // Insert the item into the end list
       newEndList.splice(destination.index, 0, start.list[source.index]);
 
-      // Create a new end column
       const newEndCol = {
         id: end.id,
         list: newEndList
       };
 
-      // Update the state
       setColumns((state) => ({
         ...state,
         [newStartCol.id]: newStartCol,
         [newEndCol.id]: newEndCol
       }));
-      return null;
     }
   };
+
+  useEffect(() => {
+    if (columns || breadCrumbsData) {
+      const issues = LocalStorage.getItem("issues") || {};
+      LocalStorage.setItem("issues", { ...issues, [url]: { columns, breadCrumbsData } });
+    }
+  }, [columns, breadCrumbsData]);
 
   const getIssues = async (values, actions) => {
     try {
@@ -97,10 +77,24 @@ function HomePageContent() {
       setIsLoading(true);
       setBreadCrumbsData(null);
 
-      const urlArr = values.search.split("/").slice(3);
+      const url = values.search;
+      setUrl(url);
+      const urlArr = url.split("/").slice(3);
       const [owner, repo] = urlArr;
 
-      const starsResponse = await API.get(generateGetStarsUrl(owner, repo));
+      const issuesFromLS = LocalStorage.getItem("issues") || {};
+      const currentIssueFromLS = issuesFromLS[url] || null;
+
+      if (currentIssueFromLS) {
+        setBreadCrumbsData(currentIssueFromLS.breadCrumbsData);
+        setColumns(currentIssueFromLS.columns);
+        return;
+      }
+
+      const issuesResponse = await API.get(urlHelpers.generateGetIssuesUrl(owner, repo));
+      const issues = issuesResponse.data;
+
+      const starsResponse = await API.get(urlHelpers.generateGetStarsUrl(owner, repo));
       const stars = starsResponse.data?.length || 0;
 
       setBreadCrumbsData((state) => ({
@@ -108,16 +102,13 @@ function HomePageContent() {
         stars: stars,
         owner: {
           name: owner,
-          url: generateOwnerUrl(owner)
+          url: urlHelpers.generateOwnerUrl(owner)
         },
         repo: {
           name: repo,
-          url: generateRepoUrl(owner, repo)
+          url: urlHelpers.generateRepoUrl(owner, repo)
         }
       }));
-
-      const issuesResponse = await API.get(generateGetIssuesUrl(owner, repo));
-      const issues = issuesResponse.data;
 
       if (issues && issues.length > 0) {
         const closedIssues = issues.filter((i) => i.state === "closed");
@@ -133,6 +124,7 @@ function HomePageContent() {
     } catch (error) {
       if (error.response) {
         setBreadCrumbsData(null);
+        setUrl(null);
         actions.setErrors({ search: error.response.data.message });
       }
     } finally {
